@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="予定ノート">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>予定ノート</title>
+<style>
+:root{--bg:#f7f5ff;--card:#fff;--ink:#29263a;--muted:#858198;--line:#eeeaf8;--purple:#8170dc;--purple2:#eeeaff;--pink:#ffe8f0;--mint:#e4f8f0;--yellow:#fff4d7;--shadow:0 10px 30px rgba(65,48,120,.08)}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#f8f5ff,#fff8fb 55%,#f3fbff);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;color:var(--ink);min-height:100vh}
+.app{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:11px}.logo{width:46px;height:46px;border-radius:16px;background:var(--purple2);display:grid;place-items:center;font-size:24px}
+h1{font-size:24px;letter-spacing:.02em;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.today-btn,.navbtn,.primary,.secondary,.delete{border:0;cursor:pointer;font:inherit;border-radius:13px;transition:transform .12s,opacity .12s}.today-btn:active,.navbtn:active,.primary:active{transform:scale(.97)}
+.today-btn{background:white;color:var(--purple);padding:10px 13px;box-shadow:var(--shadow);font-size:13px;font-weight:700}
+.card{background:rgba(255,255,255,.94);border:1px solid rgba(238,234,248,.9);border-radius:23px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.monthtitle{font-size:21px;font-weight:800}.monthcontrols{display:flex;gap:8px}.navbtn{width:36px;height:36px;background:#f5f2ff;color:#6d5bc8;font-size:20px}
+.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekdays div{text-align:center;font-size:11px;color:var(--muted);padding:6px 0;font-weight:700}.weekdays div:first-child{color:#e47b99}.weekdays div:last-child{color:#7799df}
+.day{min-height:66px;border:1px solid transparent;background:#fcfbff;border-radius:13px;padding:7px 4px 5px;text-align:center;cursor:pointer;position:relative;color:var(--ink);font:inherit}.day .num{font-size:13px;display:block;margin-bottom:6px}.day .dots{display:flex;justify-content:center;gap:3px;min-height:6px}.dot{width:5px;height:5px;border-radius:50%;background:var(--purple)}.day.other{opacity:.35}.day.weekend:first-child{color:#e47b99}.day.weekend:last-child{color:#7799df}.day.selected{background:var(--purple2);border-color:#c9c0ff;color:#5545b4;font-weight:800}.day.today .num{width:23px;height:23px;margin:0 auto 6px;background:var(--purple);color:#fff;border-radius:50%;display:grid;place-items:center}.day.selected.today .num{background:#5f4cc4}.day:hover{border-color:#d8d0ff}
+.selected-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:8px}.selected-label h2{font-size:18px;margin:0}.count{font-size:12px;color:var(--muted);background:#f6f4fc;border-radius:99px;padding:6px 10px}
+.event-list{display:flex;flex-direction:column;gap:9px}.empty{text-align:center;padding:22px 10px;color:var(--muted);font-size:13px}.empty .emoji{font-size:28px;display:block;margin-bottom:8px}
+.event{display:flex;align-items:center;gap:11px;padding:12px;background:#fbfaff;border:1px solid #f0edfa;border-radius:15px}.event.done .event-title{text-decoration:line-through;color:#aaa5b9}.check{width:23px;height:23px;flex:0 0 23px;border:2px solid #c9c1ed;border-radius:8px;background:white;display:grid;place-items:center;cursor:pointer;color:white}.event.done .check{background:#8e7cde;border-color:#8e7cde}.event-content{flex:1;min-width:0}.event-title{font-weight:700;font-size:14px;overflow-wrap:anywhere}.event-meta{font-size:11px;color:var(--muted);margin-top:4px}.tag{display:inline-block;font-size:10px;padding:3px 7px;border-radius:99px;margin-left:6px;background:var(--purple2);color:#6553bd}.tag.学校{background:#e8f1ff;color:#5476bc}.tag.プライベート{background:var(--pink);color:#bd6486}.tag.その他{background:var(--mint);color:#43896f}.delete{background:transparent;color:#b8b2c8;padding:7px;font-size:17px}.delete:hover{color:#e16d8d}
+.add-card h2{font-size:18px;margin:0 0 14px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #e9e4f5;background:#fcfbff;border-radius:12px;padding:11px 12px;font:inherit;font-size:14px;color:var(--ink);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#a99be9;box-shadow:0 0 0 3px #f0edff}.primary{width:100%;margin-top:13px;background:var(--purple);color:white;padding:13px;font-weight:800;box-shadow:0 7px 15px #8170dc33}.hint{text-align:center;color:var(--muted);font-size:11px;margin:12px 0 0}
+.top-actions{display:flex;gap:7px;align-items:center}.install-btn{border:1px solid #e8e1fb;background:#fff;color:#6d5bc8;padding:10px 11px;border-radius:13px;font:inherit;font-size:12px;font-weight:800;box-shadow:var(--shadow);cursor:pointer}.event-map{display:inline-block;margin-top:6px;color:#6553bd;background:#eeeaff;text-decoration:none;padding:5px 8px;border-radius:9px;font-size:11px;font-weight:700}.helper{font-size:13px;line-height:1.8;color:#625d78}.helper strong{color:#5545b4}.helper-close{border:0;background:#f1edff;color:#6553bd;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer}.sparkle{color:#e58baa}
+@media(max-width:430px){.brand{gap:8px}.logo{width:40px;height:40px}.top-actions{gap:5px}.install-btn{padding:9px 8px;font-size:11px}.today-btn{padding:9px 10px}}
+@media(max-width:430px){.app{padding:17px 11px 28px}.card{padding:14px;border-radius:20px}.day{min-height:57px;border-radius:10px;padding-top:6px}.day .num{margin-bottom:4px}.weekdays,.calendar{gap:3px}.monthtitle{font-size:19px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">🗓️</div><div><h1>予定ノート</h1><div class="sub">毎日を、ちょっとかわいく整理しよう</div></div></div>
+  <div class="top-actions"><button class="install-btn" id="homeHelpBtn">📱 ホーム画面へ</button><button class="today-btn" id="todayBtn">今日に戻る</button></div>
+</header>
+<section class="card">
+  <div class="monthbar"><div class="monthtitle" id="monthTitle"></div><div class="monthcontrols"><button class="navbtn" id="prev" aria-label="前の月">‹</button><button class="navbtn" id="next" aria-label="次の月">›</button></div></div>
+  <div class="weekdays"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div>
+  <div class="calendar" id="calendar"></div>
+</section>
+<section class="card">
+  <div class="selected-label"><h2 id="selectedTitle">選択した日の予定</h2><span class="count" id="count">0件</span></div>
+  <div class="event-list" id="eventList"></div>
+</section>
+<section class="card" id="homeHelp" hidden>
+  <h2 style="margin:0 0 8px">📱 ホーム画面に追加する方法</h2>
+  <div class="helper"><strong>iPad / iPhone（Safari）</strong><br>① 画面上の共有ボタン <span class="sparkle">□↑</span> を押す<br>② メニューを下にスクロールして「ホーム画面に追加」を選ぶ<br>③ 名前を「予定ノート」にして「追加」を押す<br><br>これでホーム画面のアイコンから開けるよ！✨</div>
+  <button class="helper-close" id="closeHomeHelp" style="margin-top:12px">閉じる</button>
+</section>
+<section class="card add-card">
+  <h2>✏️ 予定を追加</h2>
+  <form id="eventForm">
+    <div class="formgrid">
+      <div class="field full"><label for="eventTitle">予定の名前 *</label><input id="eventTitle" maxlength="100" placeholder="例：数学の宿題、友だちと遊ぶ" required></div>
+      <div class="field"><label for="eventDate">日付 *</label><input id="eventDate" type="date" required></div>
+      <div class="field"><label for="eventTime">時間</label><input id="eventTime" type="time"></div>
+      <div class="field"><label for="eventCategory">カテゴリー</label><select id="eventCategory"><option>学校</option><option>プライベート</option><option>その他</option></select></div>
+      <div class="field"><label for="eventLocation">場所（任意）</label><input id="eventLocation" maxlength="120" placeholder="例：学校、図書館、カフェ"></div>
+      <div class="field full"><label for="eventNote">メモ（任意）</label><input id="eventNote" maxlength="160" placeholder="持ち物や連絡事項など"></div>
+    </div>
+    <button class="primary" type="submit">＋ 予定を保存する</button>
+    <p class="hint">予定はこの端末のブラウザに自動保存されるよ ☁️</p>
+  </form>
+</section>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const now = new Date();
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  let selectedDate = iso(now);
+  let viewYear = now.getFullYear(), viewMonth = now.getMonth();
+  let events = [];
+  try { events = JSON.parse(localStorage.getItem('yoteiNoteEvents') || '[]'); if (!Array.isArray(events)) events=[]; } catch(e) { events=[]; }
+  const save = () => { try { localStorage.setItem('yoteiNoteEvents', JSON.stringify(events)); } catch(e) {} };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const prettyDate = s => { const d=new Date(s+'T12:00:00'); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${'日月火水木金土'[d.getDay()]}）`; };
+  function renderCalendar(){
+    $('monthTitle').textContent=`${viewYear}年 ${viewMonth+1}月`;
+    const first=new Date(viewYear,viewMonth,1), start=new Date(viewYear,viewMonth,1-first.getDay());
+    const html=[];
+    for(let i=0;i<42;i++){
+      const d=new Date(start); d.setDate(start.getDate()+i);
+      const key=iso(d), inMonth=d.getMonth()===viewMonth;
+      const dayEvents=events.filter(e=>e.date===key);
+      const cls=['day',!inMonth?'other':'',key===selectedDate?'selected':'',key===iso(now)?'today':''].filter(Boolean).join(' ');
+      html.push(`<button class="${cls}" data-date="${key}" aria-label="${key}、予定${dayEvents.length}件"><span class="num">${d.getDate()}</span><span class="dots">${dayEvents.slice(0,3).map(e=>`<i class="dot" style="background:${e.category==='学校'?'#7ea6e8':e.category==='プライベート'?'#e98aaa':'#69b99b'}"></i>`).join('')}</span></button>`);
+    }
+    $('calendar').innerHTML=html.join('');
+  }
+  function renderEvents(){
+    $('selectedTitle').textContent=prettyDate(selectedDate);
+    const list=events.filter(e=>e.date===selectedDate).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+    $('count').textContent=`${list.length}件`;
+    if(!list.length){$('eventList').innerHTML='<div class="empty"><span class="emoji">🌷</span>この日の予定はまだないよ<br>下から予定を追加してみてね！</div>';return;}
+    $('eventList').innerHTML=list.map(e=>`<div class="event ${e.done?'done':''}">
+      <button class="check" data-toggle="${esc(e.id)}" aria-label="完了にする">${e.done?'✓':''}</button>
+      <div class="event-content"><div class="event-title">${esc(e.title)}<span class="tag ${esc(e.category)}">${esc(e.category)}</span></div>
+      <div class="event-meta">${e.time?`⏰ ${esc(e.time)}　`:''}${e.location?`📍 ${esc(e.location)}　`:''}${e.note?`📝 ${esc(e.note)}`:''}</div>${e.location?`<a class="event-map" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location)}" target="_blank" rel="noopener noreferrer">📍 地図で開く</a>`:''}</div>
+      <button class="delete" data-delete="${esc(e.id)}" aria-label="削除">×</button>
+    </div>`).join('');
+  }
+  function render(){renderCalendar();renderEvents();}
+  $('calendar').addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;selectedDate=b.dataset.date;const d=new Date(selectedDate+'T12:00:00');viewYear=d.getFullYear();viewMonth=d.getMonth();$('eventDate').value=selectedDate;render();});
+  $('prev').addEventListener('click',()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--;}renderCalendar();});
+  $('next').addEventListener('click',()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++;}renderCalendar();});
+  $('homeHelpBtn').addEventListener('click',()=>{const box=$('homeHelp');box.hidden=!box.hidden;if(!box.hidden)box.scrollIntoView({behavior:'smooth',block:'center'});});
+  $('closeHomeHelp').addEventListener('click',()=>$('homeHelp').hidden=true);
+  $('todayBtn').addEventListener('click',()=>{selectedDate=iso(new Date());viewYear=new Date().getFullYear();viewMonth=new Date().getMonth();$('eventDate').value=selectedDate;render();});
+  $('eventList').addEventListener('click',e=>{
+    const t=e.target.closest('[data-toggle]'), d=e.target.closest('[data-delete]');
+    if(t){const item=events.find(x=>x.id===t.dataset.toggle);if(item)item.done=!item.done;save();render();}
+    if(d){const item=events.find(x=>x.id===d.dataset.delete);if(item&&confirm(`「${item.title}」を削除する？`)){events=events.filter(x=>x.id!==d.dataset.delete);save();render();}}
+  });
+  $('eventForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const title=$('eventTitle').value.trim(), date=$('eventDate').value;
+    if(!title||!date)return;
+    events.push({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),title,date,time:$('eventTime').value,category:$('eventCategory').value,location:$('eventLocation').value.trim(),note:$('eventNote').value.trim(),done:false});
+    selectedDate=date;const d=new Date(date+'T12:00:00');viewYear=d.getFullYear();viewMonth=d.getMonth();
+    save();$('eventTitle').value='';$('eventTime').value='';$('eventLocation').value='';$('eventNote').value='';render();
+  });
+  $('eventDate').value=selectedDate;
+  render();
+})();
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
